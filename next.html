@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kue Ulang Tahun dengan Efek Meniup Lilin</title>
+    <style>
+        /* Gaya CSS (sama seperti sebelumnya) */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Great+Vibes&display=swap');
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; flex-direction: column; height: 100vh; background: linear-gradient(135deg, #555555, #AAAAAA); font-family: 'Poppins', sans-serif; text-align: center; }
+        .happy-birthday-text { font-family: 'Great Vibes', cursive; font-size: 60px; color: #ff4081; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); margin-bottom: 20px; animation: fadeInText 2s ease-in-out; }
+        @keyframes fadeInText { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .cake { position: relative; width: 200px; height: 150px; background: #ffcccb; border-radius: 20px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .cake::before { content: ""; position: absolute; top: -20px; left: 10px; width: 180px; height: 40px; background: #f8b195; border-radius: 10px; }
+        .candle { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 12px; height: 50px; background: #ffeb3b; border-radius: 5px; }
+        .flame { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 15px; height: 25px; background: orange; border-radius: 50%; animation: flicker 1s infinite alternate; }
+        @keyframes flicker { 0% { opacity: 1; transform: translateY(0px) scale(1); } 100% { opacity: 0.8; transform: translateY(-5px) scale(1.1); } }
+        .flame.off { animation: fadeOut 0.5s forwards; }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(0.1); } }
+        .button { margin-top: 20px; padding: 10px 25px; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; color: white; background: linear-gradient(135deg, #ff7e5f, #feb47b); cursor: pointer; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        .button:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); }
+        .popup { display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease; }
+        .popup.active { opacity: 1; visibility: visible; }
+        .popup-content { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); max-width: 400px; transform: scale(0.8); transition: transform 0.5s ease; }
+        .popup.active .popup-content { transform: scale(1); }
+        .close-button { margin-top: 15px; padding: 10px 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, #56ccf2, #2f80ed); color: white; cursor: pointer; font-weight: bold; }
+        .close-button:hover { background: linear-gradient(135deg, #2f80ed, #56ccf2); }
+    </style>
+</head>
+<body>
+
+    <!-- Teks Happy Birthday -->
+    <div class="happy-birthday-text">🎉 Happy Birthday Fatimah Nur Zahroniah! 🎉</div>
+
+    <!-- Kue Ulang Tahun -->
+    <div class="cake">
+        <!-- Lilin dengan api menyala -->
+        <div class="candle">
+            <div class="flame" id="flame"></div>
+        </div>
+    </div>
+
+    <!-- Tombol Make a Wish -->
+    <button class="button" onclick="showPopup()">Make a Wish</button>
+
+    <!-- Pop-up untuk harapan -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <h2>Make Your Wish!</h2>
+            <textarea id="wish-text" placeholder="Tuliskan harapanmu di sini..." rows="4" cols="30"></textarea>
+            <br>
+            <button class="close-button" onclick="saveWish()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi menampilkan pop-up dan efek meniup lilin
+        function showPopup() {
+            const popup = document.getElementById('popup');
+            popup.classList.add('active');
+
+            // Matikan api lilin dengan menambahkan class 'off'
+            const flame = document.getElementById('flame');
+            flame.classList.add('off');
+        }
+
+        // Fungsi menyimpan harapan
+        async function saveWish() {
+            const wishText = document.getElementById('wish-text').value;
+
+            // Kirim data ke server
+            await fetch('http://127.0.0.1:5000/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ wish: wishText }),
+            });
+
+            // Tutup pop-up setelah tersimpan
+            const popup = document.getElementById('popup');
+            popup.classList.remove('active');
+            alert("Harapanmu telah tersimpan!");
+        }
+    </script>
+
+</body>
+</html>
